@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ayo's Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <h1>Ayo's Personal Dashboard</h1>
+    <p>Surrey, BC | Class of 2027</p>
+    <a href="https://gemini.google.com" target="_blank" class="ai-btn">Ask AI</a>
+  </header>
+
+  <main class="grid">
+    <!-- CAREER PLANNER -->
+    <section class="card">
+      <h2>Career Goals</h2>
+      <div>
+        <h3>Main Goal: BCIT AME Category E (Electronics)</h3>
+        <p><strong>Backup Goal:</strong> Woodworking / Cabinetmaking</p>
+        <p><strong>Things to Improve:</strong> Math skills & Physics prerequisite requirements for BCIT</p>
+      </div>
+    </section>
+
+    <!-- SCHOOL TRACKER -->
+    <section class="card">
+      <h2>School Courses</h2>
+      <table id="schoolTable">
+        <thead>
+          <tr>
+            <th>Course</th>
+            <th>Current Mark</th>
+            <th>Goal Mark</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Workplace Math 11</td>
+            <td>--%</td>
+            <td>--%</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- FINANCES -->
+    <section class="card">
+      <h2>Finances (Wealthsimple)</h2>
+      <p><strong>Portfolio Base:</strong> XEQT + Custom Stocks/ETFs</p>
+      <div id="financeSummary">
+        <p>Total Invested: $<span id="totalInvested">0</span></p>
+        <p>Current Value: $<span id="currentValue">0</span></p>
+      </div>
+    </section>
+
+    <!-- SCHOLARSHIPS -->
+    <section class="card full-width">
+      <h2>Scholarship Tracker</h2>
+      <p class="warning">*Only showing scholarships open without PR/Citizenship requirement.</p>
+      <div class="table-container">
+        <table id="scholarshipTable">
+          <thead>
+            <tr>
+              <th>Scholarship Name</th>
+              <th>Amount</th>
+              <th>Deadline</th>
+              <th>Eligibility Notes</th>
+              <th>PR Req?</th>
+              <th>Citizen Req?</th>
+              <th>Field</th>
+              <th>Air Cadets?</th>
+              <th>Status</th>
+              <th>Link</th>
+            </tr>
+          </thead>
+          <tbody id="scholarshipBody">
+            <!-- Data loaded from script.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
