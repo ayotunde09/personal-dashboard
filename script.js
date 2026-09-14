@@ -1,28 +1,37 @@
+// --- GOOGLE APPS SCRIPT WEB APP URL ---
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzo5fXkwO-LZljrBA8Tv25D--LXMY2powpWCPgaPywkpinCKGd-YqCdJIVqk0Y_qTN57Q/exec";
+
 // --- FINANCES HANDLER ---
 const financeForm = document.getElementById('financeForm');
-financeForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const invested = parseFloat(document.getElementById('investedInput').value) || 0;
-  const val = parseFloat(document.getElementById('valueInput').value) || 0;
-  
-  localStorage.setItem('ayo_invested', invested);
-  localStorage.setItem('ayo_value', val);
-  
-  loadFinances();
-  financeForm.reset();
-});
+if (financeForm) {
+  financeForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const invested = parseFloat(document.getElementById('investedInput').value) || 0;
+    const val = parseFloat(document.getElementById('valueInput').value) || 0;
+    
+    localStorage.setItem('ayo_invested', invested);
+    localStorage.setItem('ayo_value', val);
+    
+    loadFinances();
+    financeForm.reset();
+  });
+}
 
 function loadFinances() {
   const invested = parseFloat(localStorage.getItem('ayo_invested')) || 0;
   const val = parseFloat(localStorage.getItem('ayo_value')) || 0;
   const pnl = val - invested;
 
-  document.getElementById('totalInvested').textContent = invested.toLocaleString();
-  document.getElementById('currentValue').textContent = val.toLocaleString();
-  
-  const pnlElement = document.getElementById('profitLoss');
-  pnlElement.textContent = pnl.toLocaleString();
-  pnlElement.style.color = pnl >= 0 ? '#4ade80' : '#f87171';
+  const invElem = document.getElementById('totalInvested');
+  const valElem = document.getElementById('currentValue');
+  const pnlElem = document.getElementById('profitLoss');
+
+  if (invElem) invElem.textContent = invested.toLocaleString();
+  if (valElem) valElem.textContent = val.toLocaleString();
+  if (pnlElem) {
+    pnlElem.textContent = pnl.toLocaleString();
+    pnlElem.style.color = pnl >= 0 ? '#4ade80' : '#f87171';
+  }
 }
 
 // --- SCHOOL HANDLER ---
@@ -32,22 +41,25 @@ let courses = JSON.parse(localStorage.getItem('ayo_courses')) || [
 ];
 
 const courseForm = document.getElementById('courseForm');
-courseForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const newCourse = {
-    name: document.getElementById('courseName').value,
-    current: document.getElementById('currentMark').value,
-    goal: document.getElementById('goalMark').value,
-    teacher: document.getElementById('teacher').value || "N/A"
-  };
-  courses.push(newCourse);
-  localStorage.setItem('ayo_courses', JSON.stringify(courses));
-  renderCourses();
-  courseForm.reset();
-});
+if (courseForm) {
+  courseForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const newCourse = {
+      name: document.getElementById('courseName').value,
+      current: document.getElementById('currentMark').value,
+      goal: document.getElementById('goalMark').value,
+      teacher: document.getElementById('teacher').value || "N/A"
+    };
+    courses.push(newCourse);
+    localStorage.setItem('ayo_courses', JSON.stringify(courses));
+    renderCourses();
+    courseForm.reset();
+  });
+}
 
 function renderCourses() {
   const tbody = document.getElementById('schoolBody');
+  if (!tbody) return;
   tbody.innerHTML = '';
   courses.forEach(c => {
     tbody.innerHTML += `
@@ -61,51 +73,60 @@ function renderCourses() {
   });
 }
 
-// --- SCHOLARSHIPS HANDLER ---
-let scholarships = JSON.parse(localStorage.getItem('ayo_scholarships')) || [
-  { name: "BCIT Entrance Award", amount: "Varies", deadline: "2027", pr: "No", citizen: "No", cadets: "No", status: "Planning" },
-  { name: "Air Cadet League Aviation Award", amount: "Varies", deadline: "Spring 2027", pr: "No (Verify)", citizen: "No (Verify)", cadets: "Yes", status: "Not started" }
-];
-
+// --- SCHOLARSHIPS GOOGLE SHEETS SYNC HANDLER ---
 const scholarshipForm = document.getElementById('scholarshipForm');
-scholarshipForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const newSch = {
-    name: document.getElementById('schName').value,
-    amount: document.getElementById('schAmount').value || "N/A",
-    deadline: document.getElementById('schDeadline').value || "TBD",
-    pr: "No",
-    citizen: "No",
-    cadets: "Check",
-    status: document.getElementById('schStatus').value
-  };
-  scholarships.push(newSch);
-  localStorage.setItem('ayo_scholarships', JSON.stringify(scholarships));
-  renderScholarships();
-  scholarshipForm.reset();
-});
+if (scholarshipForm) {
+  scholarshipForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const name = document.getElementById('schName').value;
+    const amount = document.getElementById('schAmount').value || "N/A";
+    const deadline = document.getElementById('schDeadline').value || "TBD";
+    const status = document.getElementById('schStatus').value;
 
-function renderScholarships() {
-  const tbody = document.getElementById('scholarshipBody');
-  tbody.innerHTML = '';
-  scholarships.forEach(s => {
-    tbody.innerHTML += `
-      <tr>
-        <td><strong>${s.name}</strong></td>
-        <td>${s.amount}</td>
-        <td>${s.deadline}</td>
-        <td>${s.pr}</td>
-        <td>${s.citizen}</td>
-        <td>${s.cadets}</td>
-        <td><span style="color:#38bdf8">${s.status}</span></td>
-      </tr>
-    `;
+    const rowData = [name, amount, deadline, "No", "No", "Check", status];
+
+    // Send data to Google Sheets
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(rowData)
+    }).then(() => {
+      setTimeout(fetchScholarshipsFromSheet, 1000);
+    });
+    
+    scholarshipForm.reset();
   });
 }
 
-// Init all on startup
+function fetchScholarshipsFromSheet() {
+  fetch(GOOGLE_SCRIPT_URL)
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.getElementById('scholarshipBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      data.forEach((s, idx) => {
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>${s[0] || ''}</strong></td>
+            <td>${s[1] || ''}</td>
+            <td>${s[2] || ''}</td>
+            <td>${s[3] || 'No'}</td>
+            <td>${s[4] || 'No'}</td>
+            <td>${s[5] || 'Check'}</td>
+            <td><span style="color:#38bdf8">${s[6] || ''}</span></td>
+          </tr>
+        `;
+      });
+    })
+    .catch(err => console.error("Error fetching sheet data:", err));
+}
+
+// Init everything when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   loadFinances();
   renderCourses();
-  renderScholarships();
+  fetchScholarshipsFromSheet();
 });
