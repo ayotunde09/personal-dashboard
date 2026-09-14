@@ -3,14 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ayo's Dashboard</title>
+  <title>Ayo's Personal Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <header>
-    <h1>Ayo's Personal Dashboard</h1>
-    <p>Surrey, BC | Class of 2027</p>
+    <div>
+      <h1>Ayo's Personal Dashboard</h1>
+      <p>Surrey, BC | Class of 2027</p>
+    </div>
     <a href="https://gemini.google.com" target="_blank" class="ai-btn">Ask AI</a>
   </header>
 
@@ -21,45 +23,73 @@
       <div>
         <h3>Main Goal: BCIT AME Category E (Electronics)</h3>
         <p><strong>Backup Goal:</strong> Woodworking / Cabinetmaking</p>
-        <p><strong>Things to Improve:</strong> Math skills & Physics prerequisite requirements for BCIT</p>
+        <p><strong>Things to Improve:</strong> Workplace Math 11 & Physics Prerequisites</p>
+      </div>
+    </section>
+
+    <!-- FINANCES (WEALTHSIMPLE) -->
+    <section class="card">
+      <h2>Finances (Wealthsimple)</h2>
+      <p style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">Portfolio Strategy: XEQT + Custom Stocks/ETFs</p>
+      
+      <form id="financeForm" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
+        <input type="number" id="investedInput" placeholder="Total Invested ($)" required style="padding: 6px; border-radius: 4px; border: 1px solid #334155; background: #0f172a; color: white;">
+        <input type="number" id="valueInput" placeholder="Current Value ($)" required style="padding: 6px; border-radius: 4px; border: 1px solid #334155; background: #0f172a; color: white;">
+        <button type="submit" style="padding: 6px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Update Portfolio</button>
+      </form>
+
+      <div id="financeSummary">
+        <p>Total Invested: $<span id="totalInvested">0</span></p>
+        <p>Current Value: $<span id="currentValue">0</span></p>
+        <p>Profit / Loss: $<span id="profitLoss">0</span></p>
       </div>
     </section>
 
     <!-- SCHOOL TRACKER -->
-    <section class="card">
+    <section class="card full-width">
       <h2>School Courses</h2>
+      <form id="courseForm" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px;">
+        <input type="text" id="courseName" placeholder="Course (e.g. Workplace Math 11)" required style="padding: 6px; background: #0f172a; color: white; border: 1px solid #334155; border-radius: 4px;">
+        <input type="text" id="currentMark" placeholder="Current Mark (%)" required style="padding: 6px; background: #0f172a; color: white; border: 1px solid #334155; border-radius: 4px; width: 120px;">
+        <input type="text" id="goalMark" placeholder="Goal Mark (%)" required style="padding: 6px; background: #0f172a; color: white; border: 1px solid #334155; border-radius: 4px; width: 120px;">
+        <input type="text" id="teacher" placeholder="Teacher" style="padding: 6px; background: #0f172a; color: white; border: 1px solid #334155; border-radius: 4px;">
+        <button type="submit" style="padding: 6px 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Add Course</button>
+      </form>
+
       <table id="schoolTable">
         <thead>
           <tr>
             <th>Course</th>
             <th>Current Mark</th>
             <th>Goal Mark</th>
+            <th>Teacher</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>Workplace Math 11</td>
-            <td>--%</td>
-            <td>--%</td>
-          </tr>
-        </tbody>
+        <tbody id="schoolBody"></tbody>
       </table>
-    </section>
-
-    <!-- FINANCES -->
-    <section class="card">
-      <h2>Finances (Wealthsimple)</h2>
-      <p><strong>Portfolio Base:</strong> XEQT + Custom Stocks/ETFs</p>
-      <div id="financeSummary">
-        <p>Total Invested: $<span id="totalInvested">0</span></p>
-        <p>Current Value: $<span id="currentValue">0</span></p>
-      </div>
     </section>
 
     <!-- SCHOLARSHIPS -->
     <section class="card full-width">
       <h2>Scholarship Tracker</h2>
-      <p class="warning">*Only showing scholarships open without PR/Citizenship requirement.</p>
+      <p class="warning">*Only list scholarships eligible without Canadian PR / Citizenship requirement.</p>
+      
+      <form id="scholarshipForm" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; margin-bottom: 15px;">
+        <input type="text" id="schName" placeholder="Scholarship Name" required style="padding: 6px; background: #0f172a; color: white; border: 1px solid #334155; border-radius: 4px;">
+        <input type="text" id="schAmount" placeholder="Amount ($)" style="padding: 6px; background: #0f172a; color: white; border: 1px solid #334155; border-radius: 4px; width: 100px;">
+        <input type="text" id="schDeadline" placeholder="Deadline" style="padding: 6px; background: #0f172a; color: white; border: 1px solid #334155; border-radius: 4px; width: 110px;">
+        <select id="schStatus" style="padding: 6px; background: #0f172a; color: white; border: 1px solid #334155; border-radius: 4px;">
+          <option value="Not started">Not started</option>
+          <option value="Planning">Planning</option>
+          <option value="Applied">Applied</option>
+          <option value="Submitted">Submitted</option>
+          <option value="Won">Won</option>
+          <option value="Rejected">Rejected</option>
+          <option value="Not eligible">Not eligible</option>
+        </select>
+        <button type="submit" style="padding: 6px 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Add Scholarship</button>
+      </form>
+
       <div class="table-container">
         <table id="scholarshipTable">
           <thead>
@@ -67,18 +97,13 @@
               <th>Scholarship Name</th>
               <th>Amount</th>
               <th>Deadline</th>
-              <th>Eligibility Notes</th>
               <th>PR Req?</th>
               <th>Citizen Req?</th>
-              <th>Field</th>
               <th>Air Cadets?</th>
               <th>Status</th>
-              <th>Link</th>
             </tr>
           </thead>
-          <tbody id="scholarshipBody">
-            <!-- Data loaded from script.js -->
-          </tbody>
+          <tbody id="scholarshipBody"></tbody>
         </table>
       </div>
     </section>
